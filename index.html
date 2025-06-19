@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de IMC</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>🧮 Calculadora de IMC</h1>
+
+      <form id="imcForm" class="form">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" id="peso" placeholder="Ex: 70" required />
+
+        <label for="altura">Altura (cm)</label>
+        <input type="number" id="altura" placeholder="Ex: 175" required />
+
+        <label for="data">Data</label>
+        <input type="date" id="data" required />
+
+        <button type="submit">Calcular IMC</button>
+      </form>
+
+      <div id="resultado" class="resultado"></div>
+      <p class="info">O IMC é uma medida de referência. Consulte um profissional de saúde para avaliação completa.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
