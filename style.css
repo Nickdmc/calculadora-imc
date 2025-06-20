@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(to right, #e0f2fe, #c7d2fe);
   display: flex;
   justify-content: center;
@@ -10,15 +10,15 @@ body {
 
 .container {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 20px;
 }
 
 .card {
   background-color: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -28,23 +28,22 @@ body {
   color: #1e3a8a;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
+input[type="text"],
+input[type="password"],
 input[type="number"],
 input[type="date"] {
+  width: 95%;
   padding: 10px;
+  margin: 8px 0;
   font-size: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 8px;
   text-align: center;
 }
 
 button {
-  padding: 8px;
+  width: 100%;
+  padding: 12px;
   font-size: 16px;
   font-weight: bold;
   color: white;
@@ -52,110 +51,87 @@ button {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.5s ease;
+  transition: background 0.3s ease;
 }
 
 button:hover {
   background-color: #1e40af;
 }
 
-.resultado {
-  margin-top: 20px;
+#resultado {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.resultado p {
-  margin: 6px 0;
-  font-size: 16px;
+.card-historico {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+}
+
+.card-historico .dados {
+  display: flex;
+  justify-content: space-between;
+  overflow-x: auto;
+  font-size: 14px;
+}
+
+.card-historico .dados p {
+  margin: 4px 12px;
+  white-space: nowrap;
+}
+
+.orientacao {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #fff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
 }
 
 .info {
-  margin-top: 16px;
+  margin-top: 24px;
   font-size: 12px;
   color: #6b7280;
-}
-/* Tabela de histórico */
-.tabela-historico {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.tabela-historico th,
-.tabela-historico td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-
-.tabela-historico th {
-  background-color: #f1f5f9;
-  color: #1e293b;
-}
-
-.tabela-historico td {
   text-align: center;
 }
 
-/* Container da tabela com rolagem horizontal */
-.tabela-container {
-overflow-x: auto;
-margin-top: 10px;
-}
-
-.tabela-historico {
-width: 100%;
-min-width: 100%;
-border-collapse: collapse;
-font-size: 14px;
-}
-
-.btn-excluir {
-  background-color: #ef4444;
-  border: none;
-  color: white;
-  padding: 6px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-}
-
-.btn-excluir:hover {
-  background-color: #b91c1c;
+.classificacao {
+  font-weight: bold;
 }
 
 .btn-limpar {
-  margin-top: 10px;
-  background-color: #64748b;
+  background-color: #e11d48;
   color: white;
-  padding: 6px 12px;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
+  padding: 6px 12px;
   font-size: 14px;
+  margin-top: 8px;
+  cursor: pointer;
 }
 
 .btn-limpar:hover {
-  background-color: #475569;
+  background-color: #b91c1c;
 }
 
-#appContainer {
-  position: relative;
-  min-height: 500px; /* ajuste conforme necessário */
+.btn-remover-ultimo {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  margin-top: 8px;
+  cursor: pointer;
 }
 
-#logoutBtn {
-  display: block;
-  margin: 40px auto 0 auto; /* Espaço acima, centralizado */
-  width: 90%;
-  max-width: 300px;
-  position: static; /* Garante que não é absoluto */
-  z-index: 1;
+.btn-remover-ultimo:hover {
+  background-color: #d97706;
 }
-
-<canvas id="graficoIMC" width="400" height="200"></canvas>
-<div style="height:32px"></div>
-<button id="logoutBtn">Sair</button>

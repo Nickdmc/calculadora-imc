@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("imcForm");
   const resultadoDiv = document.getElementById("resultado");
 
-  // Alternar entre login e cadastro
   showRegister.addEventListener("click", function (e) {
     e.preventDefault();
     loginContainer.style.display = "none";
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     loginContainer.style.display = "block";
   });
 
-  // Cadastro
   registerBtn.addEventListener("click", function () {
     const username = document.getElementById("regUsername").value.trim();
     const password = document.getElementById("regPassword").value;
@@ -50,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1500);
   });
 
-  // Login
   loginBtn.addEventListener("click", function () {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
@@ -70,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
     exibirHistorico();
   });
 
-  // Logout
   logoutBtn.addEventListener("click", function () {
     usuarioAtual = null;
     appContainer.style.display = "none";
@@ -81,10 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (chart) chart.destroy();
   });
 
-  // Formulário de IMC
   form.addEventListener("submit", function (event) {
     event.preventDefault();
-
     if (!usuarioAtual) {
       alert("Faça login primeiro.");
       return;
@@ -95,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const data = document.getElementById("data").value;
 
     if (!peso || !alturaCm || !data) {
-      alert("Por favor, preencha todos os campos.");
+      alert("Preencha todos os campos.");
       return;
     }
 
@@ -103,14 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const imc = peso / (alturaM * alturaM);
     const imcArredondado = imc.toFixed(2);
 
-    let classificacao = "";
-
-    if (imc < 18.5) classificacao = "Abaixo do peso";
-    else if (imc < 24.9) classificacao = "Peso normal";
-    else if (imc < 29.9) classificacao = "Sobrepeso";
-    else if (imc < 34.9) classificacao = "Obesidade Grau I";
-    else if (imc < 39.9) classificacao = "Obesidade Grau II";
-    else classificacao = "Obesidade Grau III";
+    const { classificacao, cor, orientacao } = obterClassificacaoOrientacao(imc);
 
     const novoRegistro = {
       data,
@@ -118,17 +105,16 @@ document.addEventListener("DOMContentLoaded", function () {
       alturaCm,
       imc: imcArredondado,
       classificacao,
+      cor,
+      orientacao
     };
 
     const historico = JSON.parse(localStorage.getItem("historicoIMC_" + usuarioAtual)) || [];
-
-    // Evita duplicatas exatas
-    const existe = historico.some(
-      (item) =>
-        item.data === novoRegistro.data &&
-        item.peso === novoRegistro.peso &&
-        item.alturaCm === novoRegistro.alturaCm &&
-        item.imc === novoRegistro.imc
+    const existe = historico.some((item) =>
+      item.data === novoRegistro.data &&
+      item.peso === novoRegistro.peso &&
+      item.alturaCm === novoRegistro.alturaCm &&
+      item.imc === novoRegistro.imc
     );
 
     if (!existe) {
@@ -136,90 +122,71 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("historicoIMC_" + usuarioAtual, JSON.stringify(historico));
     }
 
-    exibirResultado(novoRegistro);
     exibirHistorico();
   });
 
-  function exibirResultado(resultado) {
-    resultadoDiv.innerHTML = `
-      <p><strong>Data:</strong> ${formatarData(resultado.data)}</p>
-      <p><strong>IMC:</strong> ${resultado.imc}</p>
-      <p><strong>Classificação:</strong> ${resultado.classificacao}</p>
-    `;
+  function obterClassificacaoOrientacao(imc) {
+    if (imc < 18.5) {
+      return { classificacao: "Abaixo do peso", cor: "blue", orientacao: "Considere aumentar a ingestão calórica com alimentos nutritivos. Consulte um nutricionista." };
+    } else if (imc < 25) {
+      return { classificacao: "Peso normal", cor: "green", orientacao: "Parabéns! Mantenha uma alimentação equilibrada e pratique exercícios regularmente." };
+    } else if (imc < 30) {
+      return { classificacao: "Sobrepeso", cor: "orange", orientacao: "Considere adotar uma dieta balanceada e aumentar a atividade física." };
+    } else if (imc < 35) {
+      return { classificacao: "Obesidade Grau I", cor: "orangered", orientacao: "É importante buscar orientação médica e nutricional." };
+    } else if (imc < 40) {
+      return { classificacao: "Obesidade Grau II", cor: "red", orientacao: "Recomenda-se acompanhamento médico especializado." };
+    } else {
+      return { classificacao: "Obesidade Grau III", cor: "darkred", orientacao: "É fundamental buscar acompanhamento médico imediato." };
+    }
   }
 
   function exibirHistorico() {
-    resultadoDiv.innerHTML = '';
-
-    if (!usuarioAtual) return;
-
+    resultadoDiv.innerHTML = "";
     const historico = JSON.parse(localStorage.getItem("historicoIMC_" + usuarioAtual)) || [];
-
     if (historico.length === 0) {
-      resultadoDiv.innerHTML = '';
       atualizarGrafico([], []);
       return;
     }
 
-    let tabela = `
-      <h3>Histórico</h3>
-      <div class="tabela-container">
-        <table class="tabela-historico">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Peso</th>
-              <th>Altura</th>
-              <th>IMC</th>
-              <th>Classificação</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    historico.forEach((item, index) => {
-      tabela += `
-        <tr>
-          <td>${formatarData(item.data)}</td>
-          <td>${item.peso} kg</td>
-          <td>${item.alturaCm} cm</td>
-          <td>${item.imc}</td>
-          <td>${item.classificacao}</td>
-          <td><button class="btn-excluir" data-index="${index}">🗑️</button></td>
-        </tr>
-      `;
-    });
-
-    tabela += `
-         </tbody>
-       </table>
-     </div>
+    const container = document.createElement("div");
+    const botoes = document.createElement("div");
+    botoes.className = "botoes-historico";
+    botoes.innerHTML = `
+      <button id="removerUltimo" class="btn-limpar">Remover último</button>
       <button id="limparTudo" class="btn-limpar">🧹 Limpar Histórico</button>
     `;
+    container.appendChild(botoes);
 
-    resultadoDiv.innerHTML += tabela;
-
-    // Eventos de exclusão
-    document.querySelectorAll(".btn-excluir").forEach((botao) => {
-      botao.addEventListener("click", function () {
-        const index = this.getAttribute("data-index");
-        historico.splice(index, 1);
-        localStorage.setItem("historicoIMC_" + usuarioAtual, JSON.stringify(historico));
-        exibirHistorico();
-      });
+    historico.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "card-historico";
+      card.innerHTML = `
+        <div><strong>Data:</strong> ${formatarData(item.data)}</div>
+        <div><strong>Peso:</strong> ${item.peso} kg</div>
+        <div><strong>Altura:</strong> ${item.alturaCm} cm</div>
+        <div><strong>IMC:</strong> ${item.imc}</div>
+        <div><strong>Classificação:</strong> <span style="color:${item.cor}; font-weight:bold">${item.classificacao}</span></div>
+        <div class="orientacao"><strong>💡 Orientação:</strong> ${item.orientacao}</div>
+      `;
+      container.appendChild(card);
     });
 
-    // Botão limpar tudo
+    resultadoDiv.appendChild(container);
+
+    document.getElementById("removerUltimo").addEventListener("click", () => {
+      historico.pop();
+      localStorage.setItem("historicoIMC_" + usuarioAtual, JSON.stringify(historico));
+      exibirHistorico();
+    });
+
     document.getElementById("limparTudo").addEventListener("click", () => {
       if (confirm("Tem certeza que deseja apagar todo o histórico?")) {
         localStorage.removeItem("historicoIMC_" + usuarioAtual);
-        resultadoDiv.innerHTML = "";
-        atualizarGrafico([], []);
+        exibirHistorico();
       }
     });
 
-    // Atualiza o gráfico
     const labels = historico.map(item => formatarData(item.data));
     const dadosIMC = historico.map(item => parseFloat(item.imc));
     atualizarGrafico(labels, dadosIMC);
@@ -230,7 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return data.toLocaleDateString("pt-BR");
   }
 
-  // Gráfico com Chart.js
   function atualizarGrafico(labels, dadosIMC) {
     const ctx = document.getElementById('graficoIMC').getContext('2d');
     if (chart) chart.destroy();
