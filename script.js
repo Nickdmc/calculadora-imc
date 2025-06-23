@@ -193,9 +193,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function formatarData(dataStr) {
-    const data = new Date(dataStr);
-    return data.toLocaleDateString("pt-BR");
-  }
+  const [ano, mes, dia] = dataStr.split("-").map(Number);
+  const data = new Date(ano, mes - 1, dia); // mês começa em 0 no JavaScript
+  return data.toLocaleDateString("pt-BR");
+}
+
 
   function atualizarGrafico(labels, dadosIMC) {
     const ctx = document.getElementById('graficoIMC').getContext('2d');
